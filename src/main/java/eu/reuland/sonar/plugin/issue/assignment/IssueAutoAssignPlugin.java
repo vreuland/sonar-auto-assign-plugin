@@ -2,6 +2,7 @@ package eu.reuland.sonar.plugin.issue.assignment;
 
 import com.google.common.collect.ImmutableList;
 import eu.reuland.sonar.plugin.issue.assignment.batch.IssueAutoAssignDecorator;
+import eu.reuland.sonar.plugin.issue.assignment.batch.SendAutoAssignedNewIssueNotificationPostJob;
 import org.sonar.api.PropertyType;
 import org.sonar.api.SonarPlugin;
 import org.sonar.api.config.PropertyDefinition;
@@ -11,8 +12,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A {@link SonarPlugin} that automatically assigns unresolved (and unassigned) issues based on the SCM
- * blame information
+ * A {@link SonarPlugin} that defines:
+ * <ul>
+ * <li>
+ * a {@link org.sonar.api.batch.Decorator} that automatically assigns unresolved
+ * (and unassigned) issues based on the SCM blame information,
+ * </li>
+ * <li>
+ * a {@link org.sonar.api.batch.PostJob} that sends a issue change notification for new issues
+ * that have been automatically assigned.
+ * </li>
+ * </ul>
  *
  * @author Vincent Reuland
  */
@@ -57,6 +67,7 @@ public final class IssueAutoAssignPlugin extends SonarPlugin {
     ImmutableList.Builder<Object> extensions = ImmutableList.builder();
 
     extensions.add(IssueAutoAssignDecorator.class);
+    extensions.add(SendAutoAssignedNewIssueNotificationPostJob.class);
     extensions.addAll(propertyDefinitions());
 
     return extensions.build();

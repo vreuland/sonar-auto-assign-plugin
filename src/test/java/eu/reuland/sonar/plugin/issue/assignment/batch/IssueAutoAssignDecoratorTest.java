@@ -47,7 +47,7 @@ public class IssueAutoAssignDecoratorTest {
 
   @Before
   public void enablePlugin() {
-    // The plugin is disabled by default. => Enabled it for tests
+    // The decorator is disabled by default. => Enable it for tests
     settings.setProperty(IssueAutoAssignPlugin.PROPERTY_PLUGIN_ENABLED, true);
   }
 
@@ -138,7 +138,7 @@ public class IssueAutoAssignDecoratorTest {
   }
 
   @Test
-  public void useDefaultAssignee() {
+  public void useDefaultAssigneeIfSCMMetricIsNull() {
     settings.setProperty(IssueAutoAssignPlugin.PROPERTY_DEFAULT_ASSIGNEE, "defaultAssignee");
     final DecoratorContext context = mock(DecoratorContext.class);
     Resource file = new File("Resource.java").setEffectiveKey("effectivekey").setId(1);
@@ -178,7 +178,7 @@ public class IssueAutoAssignDecoratorTest {
   }
 
   @Test
-  public void setNewIssueOnlyParameterSetToFalse() {
+  public void shouldExecuteOnOldIssueWhenNewIssueOnlyParameterIsSetToFalse() {
     settings.setProperty(IssueAutoAssignPlugin.PROPERTY_NEW_ISSUES_ONLY, false);
     final DecoratorContext context = mock(DecoratorContext.class);
     Resource file = new File("Resource.java").setEffectiveKey("effectivekey").setId(1);

@@ -47,7 +47,8 @@ public class IssueAutoAssignDecorator implements Decorator {
   private final UserDao userDao;
   private final boolean enabled;
 
-  public IssueAutoAssignDecorator(Settings settings, Project project, IssueCache issueCache, IssueUpdater issueUpdater, ResourcePerspectives perspectives, UserDao userDao) {
+  public IssueAutoAssignDecorator(Settings settings, Project project, IssueCache issueCache, IssueUpdater issueUpdater,
+                                  ResourcePerspectives perspectives, UserDao userDao) {
     this.settings = settings;
     this.issueCache = issueCache;
     this.issueUpdater = issueUpdater;
@@ -58,8 +59,15 @@ public class IssueAutoAssignDecorator implements Decorator {
   }
 
   @Override
+  public boolean shouldExecuteOnProject(Project project) {
+    return true;
+  }
+
+  @Override
   public void decorate(Resource resource, DecoratorContext context) {
-    if (!enabled) { return; }
+    if (!enabled) {
+      return;
+    }
 
     logger.trace("Decorating resource [{}]", resource.getKey());
 
@@ -75,6 +83,10 @@ public class IssueAutoAssignDecorator implements Decorator {
       return;
     }
 
+    treatUnresolvedIssues(context, unresolvedIssues);
+  }
+
+  private void treatUnresolvedIssues(DecoratorContext context, List<Issue> unresolvedIssues) {
     Map<Integer, String> authorsByLine = null;
     for (Issue issue : unresolvedIssues) {
       logger.debug("Treating unresolved issue [{}]: isNew = [{}], line = [{}], assignee = [{}]",
@@ -92,18 +104,14 @@ public class IssueAutoAssignDecorator implements Decorator {
 
       User autoAssignee = getAutoAssignee(issue, authorsByLine);
       if (autoAssignee != null) {
-        logger.info("Assigning issue [{}] to user [{}]", issue.key(), autoAssignee.login());
+        logger.debug("Assigning issue [{}] to user [{}]", issue.key(), autoAssignee.login());
         assignIssue(issue, autoAssignee);
       } else {
-        logger.info("Leaving the issue [{}] unassigned", issue.key());
+        logger.debug("Leaving the issue [{}] unassigned", issue.key());
       }
     }
   }
 
-  @Override
-  public boolean shouldExecuteOnProject(Project project) {
-    return true;
-  }
 
   private boolean isCandidateIssue(Issue issue) {
     return issue.assignee() == null &&
@@ -153,7 +161,9 @@ public class IssueAutoAssignDecorator implements Decorator {
 
   private void assignIssue(Issue issue, User user) {
     issueUpdater.assign((DefaultIssue) issue, user, changeContext);
-    issueCache.put((DefaultIssue) issue); // To be taken into account by the IssuePersister launched at the end of the scan
+    // To be taken into account by the IssuePersister launched at the end of the scan,
+    // we have to put back then updated issue in the cache
+    issueCache.put((DefaultIssue) issue);
   }
 
   private Map<Integer, String> getAuthorsByLineFromScm(DecoratorContext context) {

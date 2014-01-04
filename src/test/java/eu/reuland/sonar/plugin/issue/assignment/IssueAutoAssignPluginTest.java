@@ -10,6 +10,6 @@ import org.junit.Test;
 public class IssueAutoAssignPluginTest {
   @Test
   public void getExtensions() throws Exception {
-    Assertions.assertThat(new IssueAutoAssignPlugin().getExtensions()).hasSize(4);
+    Assertions.assertThat(new IssueAutoAssignPlugin().getExtensions()).hasSize(5);
   }
 }
