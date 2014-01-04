@@ -5,7 +5,7 @@
   <groupId>eu.reuland.sonar</groupId>
   <artifactId>sonar-auto-assign-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
 
   <name>Sonar Auto Assign Plugin</name>
   <description>Plugin that assigns automatically issues to developers based on svn blame information</description>
