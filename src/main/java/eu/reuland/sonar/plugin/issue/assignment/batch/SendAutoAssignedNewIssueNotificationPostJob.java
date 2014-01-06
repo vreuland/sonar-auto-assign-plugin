@@ -8,15 +8,10 @@ import org.sonar.api.batch.PostJob;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.internal.DefaultIssue;
-import org.sonar.api.issue.internal.IssueChangeContext;
 import org.sonar.api.notifications.NotificationManager;
 import org.sonar.api.resources.Project;
-import org.sonar.api.rules.Rule;
 import org.sonar.batch.issue.IssueCache;
 import org.sonar.core.DryRunIncompatible;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * A {@link org.sonar.api.batch.PostJob} that sends a "issue change" notification
@@ -52,8 +47,6 @@ public class SendAutoAssignedNewIssueNotificationPostJob implements PostJob {
   }
 
   private void sendNotifications(Project project) {
-    IssueChangeContext context = IssueChangeContext.createScan(project.getAnalysisDate());
-    Map<DefaultIssue, Rule> newAssignedIssues = new LinkedHashMap<DefaultIssue, Rule>();
     for (DefaultIssue issue : issueCache.all()) {
       if (issue.isNew() && issue.assignee() != null) {
         logger.debug("Sending notification for issue [{}] to user [{}]", issue.key(), issue.assignee());
