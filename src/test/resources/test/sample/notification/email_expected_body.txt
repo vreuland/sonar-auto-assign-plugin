@@ -1,0 +1,9 @@
+A new issue has been automatically assigned to you based on SCM blame.
+
+    Project: Struts
+  Component: org.apache:struts:org.apache.struts.Action
+       Rule: Avoid Cycles
+    Message: Has 3 cycles
+   Severity: MAJOR
+
+See it in SonarQube: http://localhost:9000/issue/show/ABCDE
